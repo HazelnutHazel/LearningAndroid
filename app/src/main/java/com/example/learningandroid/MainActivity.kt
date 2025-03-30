@@ -6,21 +6,30 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.learningandroid.ui.theme.GreetingsTheme
+import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -53,10 +62,18 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingText(name: String, modifier: Modifier = Modifier) {
     val greeting = determineDaytime()
+    var visible by remember { mutableStateOf(false) }
 
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier
+    LaunchedEffect(Unit) {
+        // Delay to simulate loading or some condition
+        delay(1000) // Adjust delay as needed
+        visible = true // Set visibility to true after delay
+    }
+
+    Box(
+//        verticalArrangement = Arrangement.SpaceBetween,
+//        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.fillMaxSize()
     ) {
         Text(
             text = "Good $greeting, $name!",
@@ -65,14 +82,24 @@ fun GreetingText(name: String, modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center,
             modifier = modifier
                 .padding(20.dp)
-                .padding(bottom = 50.dp)
+                .padding(bottom = 30.dp)
+                .align(Alignment.Center)
         )
-        Text(
-            text = "It's a beautiful day ♥",
-            fontSize = 20.sp,
+
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(animationSpec = tween(durationMillis = 3000)),
             modifier = modifier
-                .align(alignment = Alignment.Start)
-        )
+                .align(Alignment.BottomStart)
+        ) {
+            Text(
+                text = "It's a beautiful day...",
+                fontSize = 25.sp,
+                fontStyle = FontStyle.Italic,
+                modifier = modifier
+                    .padding(bottom = 130.dp)
+            )
+        }
     }
 }
 
